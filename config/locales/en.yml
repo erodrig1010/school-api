@@ -32,7 +32,8 @@
 en:
   hello: "Hello world"
   faker:
-      track: [Dev, IT, QA]
-      course: [Full Stack Dev, IT Support Course, QA Course]
-      subject: [MEAN, Jira, JavaScript, Python, Intercom, RoR, GitHub, Heroku]
-      commitment: [Full-Time, Part-Time]
+      name:
+          track: [Dev, IT, QA]
+          course: [Full Stack Dev, IT Support Course, QA Course]
+          subject: [MEAN, Jira, JavaScript, Python, Intercom, RoR, GitHub, Heroku]
+          commitment: [Full-Time, Part-Time]
