@@ -1,15 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe 'Courses API' do
+  let(:user) { create(:user) }
   # Initialize the test data
-  let!(:school) { create(:school) }
+  let!(:school) { create(:school, created_by: user.id) }
   let!(:courses) { create_list(:course, 20, school_id: school.id) }
   let(:school_id) { school.id }
   let(:id) { courses.first.id }
+  let(:headers) { valid_headers }
 
   # Test suite for GET /schools/:school_id/courses
   describe 'GET /schools/:school_id/courses' do
-    before { get "/schools/#{school_id}/courses" }
+    before { get "/schools/#{school_id}/courses", params: {}, headers: headers }
 
     context 'when school exists' do
       it 'returns status code 200' do
@@ -36,7 +38,7 @@ RSpec.describe 'Courses API' do
 
   # Test suite for GET /schools/:school_id/courses/:id
   describe 'GET /schools/:school_id/courses/:id' do
-    before { get "/schools/#{school_id}/courses/#{id}" }
+    before { get "/schools/#{school_id}/courses/#{id}", params: {}, headers: headers }
 
     context 'when school course exists' do
       it 'returns status code 200' do
@@ -63,10 +65,12 @@ RSpec.describe 'Courses API' do
 
   # Test suite for PUT /schools/:school_id/courses
   describe 'POST /schools/:school_id/courses' do
-    let(:valid_attributes) { { name: 'Full Stack Immersive', url: 'bootcamp.com/full_stack_immersive', description: 'Learn to code in 9 weeks.' } }
+    let(:valid_attributes) { { name: 'Full Stack Immersive', url: 'bootcamp.com/full_stack_immersive', description: 'Learn to code in 9 weeks.' }.to_json }
 
     context 'when request attributes are valid' do
-      before { post "/schools/#{school_id}/courses", params: valid_attributes }
+      before do
+        post "/schools/#{school_id}/courses", params: valid_attributes, headers: headers
+      end
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -74,7 +78,7 @@ RSpec.describe 'Courses API' do
     end
 
     context 'when an invalid request' do
-      before { post "/schools/#{school_id}/courses", params: {} }
+      before { post "/schools/#{school_id}/courses", params: {}, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -88,9 +92,11 @@ RSpec.describe 'Courses API' do
 
   # Test suite for PUT /schools/:school_id/courses/:id
   describe 'PUT /schools/:school_id/courses/:id' do
-    let(:valid_attributes) { { name: 'Full Stack Web Development Immersive' } }
+    let(:valid_attributes) { { name: 'Full Stack Web Development Immersive' }.to_json }
 
-    before { put "/schools/#{school_id}/courses/#{id}", params: valid_attributes }
+    before do
+      put "/schools/#{school_id}/courses/#{id}", params: valid_attributes, headers: headers
+    end
 
     context 'when course exists' do
       it 'returns status code 204' do
@@ -118,7 +124,7 @@ RSpec.describe 'Courses API' do
 
   # Test suite for DELETE /schools/:id
   describe 'DELETE /schools/:id' do
-    before { delete "/schools/#{school_id}/courses/#{id}" }
+    before { delete "/schools/#{school_id}/courses/#{id}", params: {}, headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

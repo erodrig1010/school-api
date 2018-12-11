@@ -1,15 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe 'Tracks API' do
+  let(:user) { create(:user) }
   # Initialize the test data
-  let!(:school) { create(:school) }
+  let!(:school) { create(:school, created_by: user.id) }
   let!(:tracks) { create_list(:track, 20, school_id: school.id) }
   let(:school_id) { school.id }
   let(:id) { tracks.first.id }
+  let(:headers) { valid_headers }
 
   # Test suite for GET /schools/:school_id/tracks
   describe 'GET /schools/:school_id/tracks' do
-    before { get "/schools/#{school_id}/tracks" }
+    before { get "/schools/#{school_id}/tracks", params: {}, headers: headers }
 
     context 'when school exists' do
       it 'returns status code 200' do
@@ -36,7 +38,7 @@ RSpec.describe 'Tracks API' do
 
   # Test suite for GET /schools/:school_id/tracks/:id
   describe 'GET /schools/:school_id/tracks/:id' do
-    before { get "/schools/#{school_id}/tracks/#{id}" }
+    before { get "/schools/#{school_id}/tracks/#{id}", params: {}, headers: headers }
 
     context 'when school track exists' do
       it 'returns status code 200' do
@@ -63,10 +65,12 @@ RSpec.describe 'Tracks API' do
 
   # Test suite for PUT /schools/:school_id/tracks
   describe 'POST /schools/:school_id/tracks' do
-    let(:valid_attributes) { { name: 'IT Support', url: 'bootcamp.com/itsupport' } }
+    let(:valid_attributes) { { name: 'IT Support', url: 'bootcamp.com/itsupport' }.to_json }
 
     context 'when request attributes are valid' do
-      before { post "/schools/#{school_id}/tracks", params: valid_attributes }
+      before do
+        post "/schools/#{school_id}/tracks", params: valid_attributes, headers: headers
+      end
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -74,7 +78,7 @@ RSpec.describe 'Tracks API' do
     end
 
     context 'when an invalid request' do
-      before { post "/schools/#{school_id}/tracks", params: {} }
+      before { post "/schools/#{school_id}/tracks", params: {}, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -88,9 +92,11 @@ RSpec.describe 'Tracks API' do
 
   # Test suite for PUT /schools/:school_id/tracks/:id
   describe 'PUT /schools/:school_id/tracks/:id' do
-    let(:valid_attributes) { { name: 'IT Support Specialist' } }
+    let(:valid_attributes) { { name: 'IT Support Specialist' }.to_json }
 
-    before { put "/schools/#{school_id}/tracks/#{id}", params: valid_attributes }
+    before do
+      put "/schools/#{school_id}/tracks/#{id}", params: valid_attributes, headers: headers
+    end
 
     context 'when track exists' do
       it 'returns status code 204' do
@@ -118,7 +124,7 @@ RSpec.describe 'Tracks API' do
 
   # Test suite for DELETE /schools/:id
   describe 'DELETE /schools/:id' do
-    before { delete "/schools/#{school_id}/tracks/#{id}" }
+    before { delete "/schools/#{school_id}/tracks/#{id}", params: {}, headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

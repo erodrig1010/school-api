@@ -9,7 +9,7 @@ class SchoolsController < ApplicationController
 
     # POST /schools
     def create
-        @school = School.create!(school_params)
+        @school = current_user.schools.create!(school_params)
         json_response(@school, :created)
     end
 
@@ -33,7 +33,7 @@ class SchoolsController < ApplicationController
     private
 
     def school_params
-        params.permit(:name, :created_by, :source_url, :etag, :about, :website, :email, :job_guarantee, :gi_bill, :job_assistance, :licensing, :housing, :corporate_training, :closed)
+        params.permit(:name, :source_url, :etag, :about, :website, :email, :job_guarantee, :gi_bill, :job_assistance, :licensing, :housing, :corporate_training, :closed)
     end
 
     def set_school
